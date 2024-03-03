@@ -24,49 +24,49 @@ public class SimulationSetup {
 		this.simulations = 100;
 		this.waveReached = 2500;
 		this.lastUpgradeToBuyRange = 200;
-		this.writeRunStatisticsToFile = 10;
+		this.writeRunStatisticsToFile = 0;
 	}
 
 	public void doSimulation() {
 		List<Integer> runs = new ArrayList<>();
 		for (int sim = 0; sim < simulations; sim++) {
-			int total_skips = 0;
-			int total_number_of_ehls_increase = 0;
-			double current_ehls_chance = ehlsSetup.getStartEhlsChance();
+			int totalSkips = 0;
+			int totalNumberOfEhlsIncrease = 0;
+			double currentEhlsChance = ehlsSetup.getStartEhlsChance();
 			List<WaveStats> duringRunStats = new ArrayList<WaveStats>();
 
 			for (int wave = 1; wave < waveReached; wave++) {
 				double rnd1 = Math.random();
 
-				if (isEhlsSkip(rnd1, current_ehls_chance)) {
-					total_skips++;
+				if (isEhlsSkip(rnd1, currentEhlsChance)) {
+					totalSkips++;
 				}
 
-				if (current_ehls_chance <= ehlsSetup.getMaxEhlsChance()) {
+				if (currentEhlsChance <= ehlsSetup.getMaxEhlsChance()) {
 					double rnd2 = Math.random();
 					if (isEhlsIncreasedByFreeUp(rnd2)) {
 						if (Math.random() < 0.50) { // EALS halfs the chance for EHLS
-							current_ehls_chance += EhlsSetup.increasePerLevel;
-							total_number_of_ehls_increase++;
+							currentEhlsChance += EhlsSetup.INCREASE_PER_LEVEL;
+							totalNumberOfEhlsIncrease++;
 						}
 					}
-					if ((current_ehls_chance < lastUpgradeToBuyRange)) {
+					if ((totalNumberOfEhlsIncrease < lastUpgradeToBuyRange)) {
 						int amount = ehlsIncreasedByCash(Math.random(), lastUpgradeToBuyRange,
-								total_number_of_ehls_increase);
-						current_ehls_chance += (EhlsSetup.increasePerLevel * amount);
-						total_number_of_ehls_increase++;
+								totalNumberOfEhlsIncrease);
+						currentEhlsChance += (EhlsSetup.INCREASE_PER_LEVEL * amount);
+						totalNumberOfEhlsIncrease++;
 					}
 
 				}
 				if ((wave + 1) % 100 == 0) {
-					duringRunStats.add(new WaveStats(total_skips, wave + 1, current_ehls_chance));
+					duringRunStats.add(new WaveStats(totalSkips, wave + 1, currentEhlsChance));
 				}
 			}
-			runs.add(total_skips);
+			runs.add(totalSkips);
 			if (sim < writeRunStatisticsToFile) {
 				String runStats = duringRunStats.stream().map(x -> x.getAllStats()).collect(Collectors.joining("\n"));
 				try {
-					writeToFile(sim, runStats);
+					writeToFile("waveStats" + sim, runStats);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -123,12 +123,10 @@ public class SimulationSetup {
 	}
 
 	private int ehlsIncreasedByCash(double rnd, int lastUpgradeToBuy, int currUpgradesNumbers) {
-		if (currUpgradesNumbers < lastUpgradeToBuy) {
-			double percentageReached = (double) currUpgradesNumbers / (double) lastUpgradeToBuy;
-			for (CashTable cashTable : CashTable.values()) {
-				if (percentageReached <= cashTable.getDistribution()) {
-					return calcCashTable(cashTable, rnd);
-				}
+		double percentageReached = (double) currUpgradesNumbers / (double) lastUpgradeToBuy;
+		for (CashTable ct : CashTable.values()) {
+			if (percentageReached <= ct.getDistribution()) {
+				return calcCashTable(ct, rnd);
 			}
 		}
 		return 0;
@@ -138,24 +136,23 @@ public class SimulationSetup {
 		return rnd < ct.getChance() ? ct.getAmount() : 0;
 	}
 
-	public void writeToFile(int fileNumber, String str) throws IOException {
-		String fileName = "waveStats " + fileNumber + ".txt";
-		BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true));
-		writer.write(str);
+	public void writeToFile(String fileName, String fileContent) throws IOException {
+		String file = fileName + ".txt";
+		BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
+		writer.write(fileContent);
 		writer.write("\n\n");
 
 		writer.close();
 	}
 
 	public void writeToConsole() {
-		System.out.println("Simulating: " + simulations + " runs with " + waveReached + " waves");
-		System.out.println("Starting EHLS at " + toPercentage(ehlsSetup.getStartEhlsChance()) + ", max EHLS at "
-				+ toPercentage(ehlsSetup.getMaxEhlsChance()) + " and "
-				+ toPercentage(freeUUSetup.getFreeUtilityUpgradeChance()) + " Free Utility Upgrade");
-		System.out.println("Min: " + minValue + "\tMax: " + maxValue + "\tAvg: " + avgValue + "\t// Amount of skips");
+		System.out.println("Simulating EHLS " + simulations + " times for " + waveReached + " waves" + "\t| "
+				+ "Start-EHLS: " + toPercentage(ehlsSetup.getStartEhlsChance()));
+		System.out.println("Min: " + minValue + "\tMax: " + maxValue + "\tAvg: " + avgValue + "\t| " + "Max-EHLS: "
+				+ toPercentage(ehlsSetup.getMaxEhlsChance()));
 		System.out.println("Min: " + toPercentage((double) minValue / waveReached) + "\tMax: "
 				+ toPercentage((double) maxValue / waveReached) + "\tAvg: " + toPercentage(avgValue / waveReached)
-				+ "\t// Percentage of Skips");
+				+ "\t| " + "Free Utility Upgrade: " + toPercentage(freeUUSetup.getFreeUtilityUpgradeChance()));
 		System.out.println("-----------------------------------------------------------------------------------");
 	}
 

@@ -78,13 +78,15 @@ public class SimulationSetup {
 		minValue = summaryStats.getMin();
 		maxValue = summaryStats.getMax();
 		avgValue = Math.round(summaryStats.getAverage());
+		
+		writeToConsole();
 	}
 
 	public void setSimulations(int simulations) {
 		this.simulations = simulations;
 	}
 
-	public void setWaveReached(int waveReached) {
+	public void setWaveReached(int waveReached) {		
 		this.waveReached = waveReached;
 	}
 
@@ -146,14 +148,14 @@ public class SimulationSetup {
 	}
 
 	public void writeToConsole() {
-		System.out.println("Simulating EHLS " + simulations + " times for " + waveReached + " waves" + "\t| "
-				+ "Start-EHLS: " + toPercentage(ehlsSetup.getStartEhlsChance()));
-		System.out.println("Min: " + minValue + "\tMax: " + maxValue + "\tAvg: " + avgValue + "\t| " + "Max-EHLS: "
+		System.out.println("Simulating EHLS " + simulations + " times for " + waveReached + " waves");
+		System.out.println("Min: " + minValue + "\tMax: " + maxValue + "\tAvg: " + String.format("%.0f", avgValue) + "\t| " + "Start-EHLS: "
+				+ toPercentage(ehlsSetup.getStartEhlsChance()) + "; Max-EHLS: "
 				+ toPercentage(ehlsSetup.getMaxEhlsChance()));
 		System.out.println("Min: " + toPercentage((double) minValue / waveReached) + "\tMax: "
 				+ toPercentage((double) maxValue / waveReached) + "\tAvg: " + toPercentage(avgValue / waveReached)
 				+ "\t| " + "Free Utility Upgrade: " + toPercentage(freeUUSetup.getFreeUtilityUpgradeChance()));
-		System.out.println("-----------------------------------------------------------------------------------");
+		
 	}
 
 }

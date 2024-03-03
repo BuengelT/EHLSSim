@@ -16,29 +16,28 @@ public class Main {
 		SimulationSetup setup = new SimulationSetup();
 		setup.setLastUpgradeToBuyRange(200);
 		setup.setWriteRunStatisticsToFile(0);
-		setup.setEhlsSetup(new EhlsSetup(EHLS_LAB, EHLS_MODULE, EHLS_AMOUNT_WS));
-		setup.setFreeUUSetup(new FreeUtilityUpgradeSetup(FREE_UTILITY_CARD, FREE_UTILITY_MODULE, FREE_UTILITY_WS));
 		setup.setSimulations(SIMULATIONS);
 		setup.setWaveReached(WAVE_REACHED);
-		setup.doSimulation();
-		setup.writeToConsole();
+		
+		setup.setEhlsSetup(new EhlsSetup(EHLS_LAB, EHLS_MODULE, EHLS_AMOUNT_WS));
+		setup.setFreeUUSetup(new FreeUtilityUpgradeSetup(FREE_UTILITY_CARD, FREE_UTILITY_MODULE, FREE_UTILITY_WS));
+		setup.doSimulation();		
 
 		setup.setEhlsSetup(new EhlsSetup(EHLS_LAB, EHLS_MODULE, 400));
 		setup.setFreeUUSetup(new FreeUtilityUpgradeSetup(0.1, 0.08, 0.495));
-		setup.doSimulation();
-		setup.writeToConsole();
-
-		setup.setWaveReached(1000);
+		setup.doSimulation();		
+		
 		setup.setEhlsSetup(new EhlsSetup(0.02, 0.08, 100));
 		setup.setFreeUUSetup(new FreeUtilityUpgradeSetup(0.1, 0.08, 0.495));
-		setup.doSimulation();
-		setup.writeToConsole();
+		setup.doSimulation();		
 
 		setup.setEhlsSetup(new EhlsSetup(0.02, 0.04, 400));
 		setup.setFreeUUSetup(new FreeUtilityUpgradeSetup(0.1, 0.08, 0.495));
 		setup.doSimulation();
-		setup.writeToConsole();
 		
+		setup.setEhlsSetup(new EhlsSetup(0.02, 0.08, 0));
+		setup.setFreeUUSetup(new FreeUtilityUpgradeSetup(0.1, 0.08, 0.495));
+		setup.doSimulation();		
 	}
 
 }

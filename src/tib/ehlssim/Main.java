@@ -27,7 +27,7 @@ public class Main {
 		setup.setFreeUUSetup(new FreeUtilityUpgradeSetup(0.1, 0.08, 0.495));
 		setup.doSimulation();
 		setup.writeToConsole();
-/*
+
 		setup.setWaveReached(1000);
 		setup.setEhlsSetup(new EhlsSetup(0.02, 0.08, 100));
 		setup.setFreeUUSetup(new FreeUtilityUpgradeSetup(0.1, 0.08, 0.495));
@@ -38,7 +38,7 @@ public class Main {
 		setup.setFreeUUSetup(new FreeUtilityUpgradeSetup(0.1, 0.08, 0.495));
 		setup.doSimulation();
 		setup.writeToConsole();
-		*/
+		
 	}
 
 }

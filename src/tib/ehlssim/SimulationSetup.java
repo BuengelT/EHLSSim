@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.IntSummaryStatistics;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,8 +16,8 @@ public class SimulationSetup {
 	private int writeRunStatisticsToFile;
 	private EhlsSetup ehlsSetup;
 	private FreeUtilityUpgradeSetup freeUUSetup;
-	private Integer minValue;
-	private Integer maxValue;
+	private int minValue;
+	private int maxValue;
 	private double avgValue;
 
 	public SimulationSetup() {
@@ -50,7 +51,7 @@ public class SimulationSetup {
 						}
 					}
 					if ((current_ehls_chance < lastUpgradeToBuyRange)) {
-						Integer amount = ehlsIncreasedByCash(Math.random(), lastUpgradeToBuyRange,
+						int amount = ehlsIncreasedByCash(Math.random(), lastUpgradeToBuyRange,
 								total_number_of_ehls_increase);
 						current_ehls_chance += (EhlsSetup.increasePerLevel * amount);
 						total_number_of_ehls_increase++;
@@ -121,32 +122,19 @@ public class SimulationSetup {
 		return String.format("%.2f", val * 100) + "%";
 	}
 
-	private double toDouble(Integer i) {
-		double result = i;
-		return result;
-	}
-
-	private Integer ehlsIncreasedByCash(double rnd, int lastUpgradeToBuy, int currUpgradesNumbers) {
+	private int ehlsIncreasedByCash(double rnd, int lastUpgradeToBuy, int currUpgradesNumbers) {
 		if (currUpgradesNumbers < lastUpgradeToBuy) {
-			double percentageReached = currUpgradesNumbers / lastUpgradeToBuy;
-			if (percentageReached <= CashTable.first.getDistribution()) {
-				return calcCashTable(CashTable.first, rnd);
-			} else if (percentageReached <= CashTable.second.getDistribution()) {
-				return calcCashTable(CashTable.second, rnd);
-			} else if (percentageReached <= CashTable.third.getDistribution()) {
-				return calcCashTable(CashTable.third, rnd);
-			} else if (percentageReached <= CashTable.fourth.getDistribution()) {
-				return calcCashTable(CashTable.fourth, rnd);
-			} else if (percentageReached <= CashTable.fifth.getDistribution()) {
-				return calcCashTable(CashTable.fifth, rnd);
-			} else {
-				return calcCashTable(CashTable.sixth, rnd);
+			double percentageReached = (double) currUpgradesNumbers / (double) lastUpgradeToBuy;
+			for (CashTable cashTable : CashTable.values()) {
+				if (percentageReached <= cashTable.getDistribution()) {
+					return calcCashTable(cashTable, rnd);
+				}
 			}
 		}
 		return 0;
 	}
 
-	private Integer calcCashTable(CashTable ct, double rnd) {
+	private int calcCashTable(CashTable ct, double rnd) {
 		return rnd < ct.getChance() ? ct.getAmount() : 0;
 	}
 
@@ -165,8 +153,8 @@ public class SimulationSetup {
 				+ toPercentage(ehlsSetup.getMaxEhlsChance()) + " and "
 				+ toPercentage(freeUUSetup.getFreeUtilityUpgradeChance()) + " Free Utility Upgrade");
 		System.out.println("Min: " + minValue + "\tMax: " + maxValue + "\tAvg: " + avgValue + "\t// Amount of skips");
-		System.out.println("Min: " + toPercentage(toDouble(minValue) / waveReached) + "\tMax: "
-				+ toPercentage(toDouble(maxValue) / waveReached) + "\tAvg: " + toPercentage(avgValue / waveReached)
+		System.out.println("Min: " + toPercentage((double) minValue / waveReached) + "\tMax: "
+				+ toPercentage((double) maxValue / waveReached) + "\tAvg: " + toPercentage(avgValue / waveReached)
 				+ "\t// Percentage of Skips");
 		System.out.println("-----------------------------------------------------------------------------------");
 	}

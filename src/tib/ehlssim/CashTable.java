@@ -32,7 +32,7 @@ package tib.ehlssim;
  * in that area
  */
 enum CashTable {
-	first(0.15, 1.0, 1), // 15% each wave
+	first(0.15, 1.0, 2), // 15% each wave
 	second(0.3, 0.5, 1), // 30% each 2nd wave
 	third(0.5, 0.3333, 1), // 50% each 3rd wave
 	fourth(0.65, 0.1667, 1), // 75% each 6th wave
@@ -42,9 +42,9 @@ enum CashTable {
 
 	private double distribution;
 	private double chance;
-	private Integer amount;
+	private int amount;
 
-	CashTable(double distribution, double chance, Integer amount) {
+	CashTable(double distribution, double chance, int amount) {
 		this.distribution = distribution;
 		this.chance = chance;
 		this.amount = amount;
@@ -58,7 +58,7 @@ enum CashTable {
 		return this.chance;
 	}
 
-	public Integer getAmount() {
+	public int getAmount() {
 		return this.amount;
 	}
 }
